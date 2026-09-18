@@ -7,30 +7,32 @@ import (
 )
 
 type Config struct {
-	AppName    string
-	AppPort    string
-	DBHost     string
-	DBPort     int
-	DBUser     string
-	DBPassword string
-	DBName     string
-	DBSSLMode  string
-	JWTSecret  string
+	AppName      string
+	AppPort      string
+	DBHost       string
+	DBPort       int
+	DBUser       string
+	DBPassword   string
+	DBName       string
+	DBSSLMode    string
+	JWTSecret    string
+	HospitalAURL string
 }
 
 func Load() Config {
 	dbPort, _ := strconv.Atoi(getEnv("DB_PORT", "5432"))
 
 	return Config{
-		AppName:    getEnv("APP_NAME", "agnos-backend"),
-		AppPort:    getEnv("APP_PORT", "8080"),
-		DBHost:     getEnv("DB_HOST", "localhost"),
-		DBPort:     dbPort,
-		DBUser:     getEnv("DB_USER", "agnos"),
-		DBPassword: getEnv("DB_PASSWORD", "agnos123"),
-		DBName:     getEnv("DB_NAME", "agnos"),
-		DBSSLMode:  getEnv("DB_SSLMODE", "disable"),
-		JWTSecret:  getEnv("JWT_SECRET", "secret"),
+		AppName:      getEnv("APP_NAME", "agnos-backend"),
+		AppPort:      getEnv("APP_PORT", "8080"),
+		DBHost:       getEnv("DB_HOST", "localhost"),
+		DBPort:       dbPort,
+		DBUser:       getEnv("DB_USER", "agnos"),
+		DBPassword:   getEnv("DB_PASSWORD", "agnos123"),
+		DBName:       getEnv("DB_NAME", "agnos"),
+		DBSSLMode:    getEnv("DB_SSLMODE", "disable"),
+		JWTSecret:    getEnv("JWT_SECRET", "secret"),
+		HospitalAURL: getEnv("HOSPITAL_A_URL", "https://hospital-a.api.co.th"),
 	}
 }
 
