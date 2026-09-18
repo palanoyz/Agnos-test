@@ -14,9 +14,16 @@ import (
 var (
 	ErrInvalidInput       = errors.New("username, password, and hospital are required")
 	ErrStaffAlreadyExists = errors.New("staff member already exists in hospital")
+	ErrInvalidCredentials = errors.New("invalid credentials")
 )
 
 type CreateRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Hospital string `json:"hospital"`
+}
+
+type LoginRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 	Hospital string `json:"hospital"`
@@ -66,4 +73,30 @@ func (s *Service) Create(request CreateRequest) (*models.Staff, error) {
 	}
 
 	return staffMember, nil
+}
+
+func (s *Service) Authenticate(request LoginRequest) (*models.Staff, error) {
+	request.Username = strings.TrimSpace(request.Username)
+	request.Hospital = strings.TrimSpace(request.Hospital)
+	if request.Username == "" || request.Password == "" || request.Hospital == "" {
+		return nil, ErrInvalidInput
+	}
+
+	var staffMember models.Staff
+	err := s.db.
+		Joins("JOIN hospitals ON hospitals.id = staffs.hospital_id").
+		Where("staffs.username = ? AND hospitals.name = ?", request.Username, request.Hospital).
+		First(&staffMember).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, ErrInvalidCredentials
+	}
+	if err != nil {
+		return nil, fmt.Errorf("find staff: %w", err)
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(staffMember.PasswordHash), []byte(request.Password)); err != nil {
+		return nil, ErrInvalidCredentials
+	}
+
+	return &staffMember, nil
 }

@@ -15,6 +15,7 @@ type Config struct {
 	DBPassword string
 	DBName     string
 	DBSSLMode  string
+	JWTSecret  string
 }
 
 func Load() Config {
@@ -29,6 +30,7 @@ func Load() Config {
 		DBPassword: getEnv("DB_PASSWORD", "agnos123"),
 		DBName:     getEnv("DB_NAME", "agnos"),
 		DBSSLMode:  getEnv("DB_SSLMODE", "disable"),
+		JWTSecret:  getEnv("JWT_SECRET", "secret"),
 	}
 }
 
