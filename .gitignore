@@ -1,0 +1,12 @@
+.env
+.env.*
+/bin/
+/pkg/
+*.exe
+*.dll
+*.so
+*.dylib
+.vscode/
+.DS_Store
+coverage.out
+*.log
