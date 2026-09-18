@@ -1,0 +1,42 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: agnos-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-agnos}
+      POSTGRES_USER: ${DB_USER:-agnos}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-agnos123}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER:-agnos} -d ${DB_NAME:-agnos}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: agnos-app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      APP_NAME: ${APP_NAME:-agnos-backend}
+      APP_PORT: ${APP_PORT:-8080}
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_USER: ${DB_USER:-agnos}
+      DB_PASSWORD: ${DB_PASSWORD:-agnos123}
+      DB_NAME: ${DB_NAME:-agnos}
+      DB_SSLMODE: disable
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
