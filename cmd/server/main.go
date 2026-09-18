@@ -27,6 +27,10 @@ func main() {
 		log.Fatal(err)
 	}
 
+	if err := db.Seed(database); err != nil {
+		log.Fatal(err)
+	}
+
 	router := gin.Default()
 	staffHandler := staff.NewHandler(staff.NewService(database), cfg)
 	router.POST("/staff/create", staffHandler.Create)
