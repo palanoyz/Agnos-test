@@ -12,8 +12,12 @@ func main() {
 	cfg := config.Load()
 	fmt.Printf("Agnos backend starting: %s on port %s\n", cfg.AppName, cfg.AppPort)
 
-	_, err := db.Connect(cfg)
+	database, err := db.Connect(cfg)
 	if err != nil {
+		log.Fatal(err)
+	}
+
+	if err := db.Migrate(database); err != nil {
 		log.Fatal(err)
 	}
 
