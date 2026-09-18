@@ -6,11 +6,14 @@ import (
 
 	"agnos-test/internal/config"
 	"agnos-test/internal/db"
+	"agnos-test/internal/staff"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	cfg := config.Load()
-	fmt.Printf("Agnos backend starting: %s on port %s\n", cfg.AppName, cfg.AppPort)
+	fmt.Printf("Server starting: %s on port %s\n", cfg.AppName, cfg.AppPort)
 
 	database, err := db.Connect(cfg)
 	if err != nil {
@@ -21,5 +24,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("Database connection configured for %s@%s:%d/%s\n", cfg.DBUser, cfg.DBHost, cfg.DBPort, cfg.DBName)
+	router := gin.Default()
+	staffHandler := staff.NewHandler(staff.NewService(database))
+	router.POST("/staff/create", staffHandler.Create)
+
+	if err := router.Run(":" + cfg.AppPort); err != nil {
+		log.Fatal(err)
+	}
 }
