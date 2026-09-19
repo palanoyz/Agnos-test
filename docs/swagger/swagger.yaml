@@ -1,0 +1,174 @@
+basePath: /
+definitions:
+  staff.CreateRequest:
+    properties:
+      hospital:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  staff.LoginRequest:
+    properties:
+      hospital:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API for hospital staff authentication and hospital-scoped patient search.
+  title: Agnos Hospital Middleware API
+  version: "1.0"
+paths:
+  /patient/search:
+    get:
+      parameters:
+      - description: Exact national identification number
+        in: query
+        name: national_id
+        type: string
+      - description: Exact passport identification number
+        in: query
+        name: passport_id
+        type: string
+      - description: Partial Thai or English first name
+        in: query
+        name: first_name
+        type: string
+      - description: Partial Thai or English middle name
+        in: query
+        name: middle_name
+        type: string
+      - description: Partial Thai or English last name
+        in: query
+        name: last_name
+        type: string
+      - description: Date of birth in YYYY-MM-DD format
+        in: query
+        name: date_of_birth
+        type: string
+      - description: Exact phone number
+        in: query
+        name: phone_number
+        type: string
+      - description: Exact email address
+        in: query
+        name: email
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Search patients
+      tags:
+      - Patients
+  /staff/create:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Staff credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/staff.CreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Conflict
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a hospital staff account
+      tags:
+      - Staff
+  /staff/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Staff credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/staff.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Authenticate a hospital staff member
+      tags:
+      - Staff
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

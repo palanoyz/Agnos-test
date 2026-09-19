@@ -107,6 +107,9 @@ docker compose down -v
 
 All examples below use the Nginx URL.
 
+Interactive Swagger UI is available at
+[`http://localhost:8080/swagger/index.html`](http://localhost:8080/swagger/index.html).
+
 ### `POST /staff/create`
 
 Creates a staff account. If the named hospital does not exist, it is created.
